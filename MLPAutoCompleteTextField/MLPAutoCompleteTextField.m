@@ -112,6 +112,10 @@ static NSString *kDefaultAutoCompleteCellIdentifier = @"_DefaultAutoCompleteCell
     [self styleAutoCompleteTableForBorderStyle:self.borderStyle];
 }
 
+-(void)scrollTextFieldToVisible{
+    //如果UITextField在UIScrollView的可见区域外(如frame.origin.y=负数)，即使重新设置contentOffset和contentInsets之后让其显示出来，点击显示键盘后contentOffset会自动下移30个距离。
+    //override scrollTextFieldToVisible以去掉这个行为。
+}
 
 #pragma mark - Notifications and KVO
 
@@ -411,7 +415,9 @@ withAutoCompleteString:(NSString *)string
     } else {
         [self expandDropDownAutoCompleteTableForNumberOfRows:numberOfRows];
     }
-    
+    if ([self.autoCompleteDelegate respondsToSelector:@selector(suggestionListExpanded)]) {
+        [self.autoCompleteDelegate suggestionListExpanded];
+    }
 }
 
 - (void)expandKeyboardAutoCompleteTableForNumberOfRows:(NSInteger)numberOfRows
@@ -466,6 +472,9 @@ withAutoCompleteString:(NSString *)string
 {
     [self.autoCompleteTableView removeFromSuperview];
     [self restoreOriginalShadowProperties];
+    if ([self.autoCompleteDelegate respondsToSelector:@selector(suggestionListClosed)]) {
+        [self.autoCompleteDelegate suggestionListClosed];
+    }
 }
 
 

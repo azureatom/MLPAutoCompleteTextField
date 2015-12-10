@@ -19,6 +19,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 @protocol MLPAutoCompleteTextFieldDelegate <NSObject>
 
 @optional
+-(void)suggestionListExpanded;//after autoCompleteTableView show
+-(void)suggestionListClosed;//after autoCompleteTableView hide
+
 - (BOOL)autoCompleteTextField:(MLPAutoCompleteTextField *)textField
     shouldStyleAutoCompleteTableView:(UITableView *)autoCompleteTableView
                       forBorderStyle:(UITextBorderStyle)borderStyle;
