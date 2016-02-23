@@ -212,7 +212,9 @@ static NSString *kDefaultAutoCompleteCellIdentifier = @"_DefaultAutoCompleteCell
         NSAssert(0, @"Autocomplete suggestions must either be NSString or objects conforming to the MLPAutoCompletionObject protocol.");
     }
     
-    
+    if ([cell respondsToSelector:@selector(configCellWith:)]) {
+        [cell performSelector:@selector(configCellWith:) withObject:autoCompleteObject];
+    }
     [self configureCell:cell atIndexPath:indexPath withAutoCompleteString:suggestedString];
     
     
@@ -761,8 +763,6 @@ withAutoCompleteString:(NSString *)string
     [self.autoCompleteFetchQueue addOperation:fetchOperation];
 }
 
-
-
 #pragma mark - Factory Methods
 
 - (UITableView *)newAutoCompleteTableViewForTextField:(MLPAutoCompleteTextField *)textField
@@ -773,8 +773,9 @@ withAutoCompleteString:(NSString *)string
                                                              style:UITableViewStylePlain];
     [newTableView setDelegate:textField];
     [newTableView setDataSource:textField];
+    newTableView.bounces = NO;
     [newTableView setScrollEnabled:YES];
-    [newTableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+    [newTableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
     
     return newTableView;
 }
@@ -841,7 +842,7 @@ withAutoCompleteString:(NSString *)string
     
     frame.origin.x += textField.autoCompleteTableOriginOffset.width;
     frame.origin.y += textField.autoCompleteTableOriginOffset.height;
-    frame = CGRectInset(frame, 1, 0);
+//    frame = CGRectInset(frame, 1, 0);//comment out, because outside may need to know the exact frame.size
     
     return frame;
 }

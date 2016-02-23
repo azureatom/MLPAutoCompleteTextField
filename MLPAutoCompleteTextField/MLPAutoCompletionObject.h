@@ -33,3 +33,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - (NSString *)autocompleteString;
 
 @end
+
+//Registered Cell class for MLPAutoCompleteTextField should conform MLPAutoCompleteCellDelegate protocol
+@protocol MLPAutoCompleteCellDelegate <NSObject>
+@required
+-(void)configCellWith:(id<MLPAutoCompletionObject>)object;
+@end
