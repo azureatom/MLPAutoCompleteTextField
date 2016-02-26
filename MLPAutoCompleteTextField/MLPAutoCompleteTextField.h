@@ -27,7 +27,7 @@
 @end
 
 
-@interface MLPAutoCompleteTextField : UITextField <UITableViewDataSource, UITableViewDelegate, MLPAutoCompleteSortOperationDelegate, MLPAutoCompleteFetchOperationDelegate>
+@interface MLPAutoCompleteTextField : UITextField <UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, MLPAutoCompleteSortOperationDelegate, MLPAutoCompleteFetchOperationDelegate>
 
 + (NSString *) accessibilityLabelForIndexPath:(NSIndexPath *)indexPath;
 
@@ -47,6 +47,7 @@
 @property (assign) BOOL disableAutoCompleteTableUserInteractionWhileFetching;
 @property (assign) BOOL autoCompleteTableAppearsAsKeyboardAccessory; //if set to TRUE, the autocomplete table will appear as a keyboard input accessory view rather than a drop down.
 @property (assign) BOOL shouldResignFirstResponderFromKeyboardAfterSelectionOfAutoCompleteRows; // default is TRUE
+@property (assign, nonatomic) BOOL shouldCloseTableWhenResignFirstResponder;//defalut is YES, close dropdown list when resignFirstResponder. If NO, then must call closeAutoCompleteTableView explicitly outside.
 @property (assign) NSInteger maximumEditDistance; //This is the maximum amount of edits allowed for a word to be considered as a possible autocomplete suggestion to the user input. Set this to 0 to require an exact match of the user input so far. Defaults to 100.
 
 @property (assign) BOOL requireAutoCompleteSuggestionsToMatchInputExactly; //If true, the only suggestions that are shown will be words that complete the currently user input (This is the same as a maximumEditDistance of 0). Defaults to false to take typos into consideration.
@@ -61,7 +62,8 @@
 @property (assign) CGFloat partOfAutoCompleteRowHeightToCut; // this number multiplied by autoCompleteRowHeight will be subtracted from total tableView height.
 @property (assign) CGFloat autoCompleteRowHeight;
 @property (nonatomic, assign) CGRect autoCompleteTableFrame;
-@property (assign) CGSize autoCompleteTableOriginOffset;
+@property (assign) CGSize autoCompleteTableOriginOffset;//origin offset for drowdown tableview
+@property (nonatomic, assign) CGSize autoCompleteTableSizeOffset;//size offset for drowdown tableview, default is CGSizeZero.
 @property (assign) CGFloat autoCompleteTableCornerRadius; //only applies for drop down style autocomplete tables.
 @property (nonatomic, assign) UIEdgeInsets autoCompleteContentInsets;
 @property (nonatomic, assign) UIEdgeInsets autoCompleteScrollIndicatorInsets;
@@ -75,7 +77,7 @@
 - (void)registerAutoCompleteCellNib:(UINib *)nib forCellReuseIdentifier:(NSString *)reuseIdentifier;
 
 - (void)registerAutoCompleteCellClass:(Class)cellClass forCellReuseIdentifier:(NSString *)reuseIdentifier;
-
+- (void)closeAutoCompleteTableView;
 - (void)reloadData; //it will ask DataSource for data again
 @end
 

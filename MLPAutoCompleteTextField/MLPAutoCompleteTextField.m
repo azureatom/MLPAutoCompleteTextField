@@ -177,6 +177,13 @@ static NSString *kDefaultAutoCompleteCellIdentifier = @"_DefaultAutoCompleteCell
     }
 }
 
+#pragma mark - UIScrollViewDelegate
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
+    if (self.isFirstResponder) {
+        [self resignFirstResponder];
+    }
+}
+
 #pragma mark - TableView Datasource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -393,7 +400,7 @@ withAutoCompleteString:(NSString *)string
 - (BOOL)resignFirstResponder
 {
     [self restoreOriginalShadowProperties];
-    if(!self.autoCompleteTableAppearsAsKeyboardAccessory){
+    if(!self.autoCompleteTableAppearsAsKeyboardAccessory && self.shouldCloseTableWhenResignFirstResponder){
         [self closeAutoCompleteTableView];
     }
     return [super resignFirstResponder];
@@ -492,6 +499,7 @@ withAutoCompleteString:(NSString *)string
     [self setApplyBoldEffectToAutoCompleteSuggestions:YES];
     [self setShowTextFieldDropShadowWhenAutoCompleteTableIsOpen:YES];
     [self setShouldResignFirstResponderFromKeyboardAfterSelectionOfAutoCompleteRows:YES];
+    [self setShouldCloseTableWhenResignFirstResponder:YES];
     [self setAutoCompleteRowHeight:40];
     [self setAutoCompleteFontSize:13];
     [self setMaximumNumberOfAutoCompleteRows:3];
@@ -659,6 +667,7 @@ withAutoCompleteString:(NSString *)string
 {
     [self setAutoCompleteTableCornerRadius:8.0];
     [self setAutoCompleteTableOriginOffset:CGSizeMake(0, -18)];
+    [self setAutoCompleteTableSizeOffset:CGSizeZero];
     [self setAutoCompleteScrollIndicatorInsets:UIEdgeInsetsMake(18, 0, 0, 0)];
     [self setAutoCompleteContentInsets:UIEdgeInsetsMake(18, 0, 0, 0)];
     
@@ -673,6 +682,7 @@ withAutoCompleteString:(NSString *)string
 {
     [self setAutoCompleteTableCornerRadius:0.0];
     [self setAutoCompleteTableOriginOffset:CGSizeZero];
+    [self setAutoCompleteTableSizeOffset:CGSizeZero];
     [self setAutoCompleteScrollIndicatorInsets:UIEdgeInsetsZero];
     [self setAutoCompleteContentInsets:UIEdgeInsetsZero];
     [self setAutoCompleteTableBorderWidth:1.0];
@@ -689,6 +699,7 @@ withAutoCompleteString:(NSString *)string
 {
     [self setAutoCompleteTableCornerRadius:8.0];
     [self setAutoCompleteTableOriginOffset:CGSizeMake(0, 7)];
+    [self setAutoCompleteTableSizeOffset:CGSizeZero];
     [self setAutoCompleteScrollIndicatorInsets:UIEdgeInsetsZero];
     [self setAutoCompleteContentInsets:UIEdgeInsetsZero];
     [self setAutoCompleteTableBorderWidth:1.0];
@@ -773,7 +784,6 @@ withAutoCompleteString:(NSString *)string
                                                              style:UITableViewStylePlain];
     [newTableView setDelegate:textField];
     [newTableView setDataSource:textField];
-    newTableView.bounces = NO;
     [newTableView setScrollEnabled:YES];
     [newTableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
     
@@ -842,7 +852,8 @@ withAutoCompleteString:(NSString *)string
     
     frame.origin.x += textField.autoCompleteTableOriginOffset.width;
     frame.origin.y += textField.autoCompleteTableOriginOffset.height;
-//    frame = CGRectInset(frame, 1, 0);//comment out, because outside may need to know the exact frame.size
+    frame.size.width += textField.autoCompleteTableSizeOffset.width;
+    frame.size.height += textField.autoCompleteTableSizeOffset.height;
     
     return frame;
 }
