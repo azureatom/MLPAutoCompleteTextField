@@ -177,13 +177,6 @@ static NSString *kDefaultAutoCompleteCellIdentifier = @"_DefaultAutoCompleteCell
     }
 }
 
-#pragma mark - UIScrollViewDelegate
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
-    if (self.isFirstResponder) {
-        [self resignFirstResponder];
-    }
-}
-
 #pragma mark - TableView Datasource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -786,8 +779,24 @@ withAutoCompleteString:(NSString *)string
     [newTableView setDataSource:textField];
     [newTableView setScrollEnabled:YES];
     [newTableView setSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
-    
+    //to withdraw keyboard when drag table, should add UIPanGestureRecognizer, not set keyboardDismissMode or override scrollViewDidScroll. Because when table height is low, those behaviors are not triggered.
+//    newTableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+    UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+    panGestureRecognizer.delegate = self;
+    [newTableView addGestureRecognizer:panGestureRecognizer];
     return newTableView;
+}
+
+-(void)handlePanGesture:(UIGestureRecognizer *)sender{
+    if (sender.state == UIGestureRecognizerStateBegan && self.isFirstResponder) {
+        [self resignFirstResponder];
+    }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+    return YES;
 }
 
 - (CGRect)autoCompleteTableViewFrameForTextField:(MLPAutoCompleteTextField *)textField

@@ -27,7 +27,7 @@
 @end
 
 
-@interface MLPAutoCompleteTextField : UITextField <UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, MLPAutoCompleteSortOperationDelegate, MLPAutoCompleteFetchOperationDelegate>
+@interface MLPAutoCompleteTextField : UITextField <UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate, MLPAutoCompleteSortOperationDelegate, MLPAutoCompleteFetchOperationDelegate>
 
 + (NSString *) accessibilityLabelForIndexPath:(NSIndexPath *)indexPath;
 
